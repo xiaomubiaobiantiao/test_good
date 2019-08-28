@@ -20,13 +20,42 @@ $container = new Container();
 
 // new IndexController();
 
-
+// 绑定的时候用命名空间的绝对路径
 // 测试二 三
+// 抽象类绑定实现类的方式
 $container->bind( 'Interfaces\ModelInterface', 'Service\IndexService' );
-// $container->bind( 'Interfaces\ModelInterface', 'Model\TestModel' );
+$container->bind( 'Interfaces\ModelInterface', 'Model\TestModel' );
 
-// $container->bind( 'Controller\IndexController', array( 'Interfaces\ModelInterface', 'Service\IndexService' ));
+// 执行类绑定抽象类和实现类的方式
+// 执行类 - 数组( 抽象类, 实现类 )
+$container->bind( 'Controller\IndexController', array( 'Interfaces\ModelInterface', 'Service\IndexService' ));
+
+// 方法中的绑定抽象类和实现类的方式
+// 执行类 - 数组( 方法名称 - 数组( 抽象类, 实现类 ) )
+$container->bind( 'Controller\IndexController', array( 'testMethod', array( 'Interfaces\ModelInterface', 'Service\IndexService' )));
+$container->bind( 'Controller\IndexController', array( 'testMethod', array( 'asdf\asdf', 'Service\asdf' )));
+
 // $container->bind( 'Controller\IndexController', array( 'Interfaces\ModelInterface', 'Model\TestModel' ));
+
+// 绑定别名的方法 - 接口不需要绑定别名 - 只有执行类和实现类需要绑定别名
+$container->setAlias( 'ModelInterface', 'Interfaces\ModelInterface' );
+$container->setAlias( 'IndexService', 'Service\IndexService' );
+
+// dump( $container->getAlias() );
+dump( $container->getBinds() );
+// dump( $container->getAllAlias() );
+
+// 绑定后的执行类和抽象类实现类, 调用方式和执行生成普通类的用法是一样的, 只需要输入命名空间命称或别名
+// $container->make( 'IndexController' );
+// 未绑定的可以在第二个参数加一个抽象类的实现类就可以
+// $container->make( 'IndexController', 'IndexService' );
+
+// 调用类中方法注入的执行方式 - 注意 千万不要忽略掉 第 3 个参数, 没有绑定就写 null ** 参数必须传数组
+$container->makeWith( $container->make( 'IndexController', 'TestModel', array('99875','6546ds4') ), 'testMethod', null, array( 'asdf', 'sda;flkjsa' ) );
+
+// 第二种 - 调用类中方法注入的执行方式
+$classInstance = $container->make( 'IndexController', 'TestModel', array('99875','6546ds4') );
+$container->makeWith( $classInstance, 'testMethod', null, array( 'asdf', 'sda;flkjsa' ) );
 
 
 // 测试一
@@ -41,15 +70,7 @@ $container->bind( 'Interfaces\ModelInterface', 'Service\IndexService' );
 
 // $container->bind( 'ModelInterface', 'Interfaces\ModelInterface' );
 
-$container->setAlias( 'ModelInterface', 'Interfaces\ModelInterface' );
-$container->setAlias( 'IndexService', 'Service\IndexService' );
 
-// dump( $container->getAlias() );
-dump( $container->getBinds() );
-// dump( $container->getAllAlias() );
-
-$container->make( 'IndexController' );
-// $container->make( 'IndexController', 'IndexService' );
 
 
 // 绑定接口的用法

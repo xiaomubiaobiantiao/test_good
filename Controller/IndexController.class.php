@@ -15,7 +15,7 @@ class IndexController
 		
 	}
 	
-	public function testMethod( bbb $sadf, $abc = null ) {
+	public function testMethod( bbb $sadf, array $abc = null ) {
 		
 		$sadf->connection();
 		dump( $abc );
